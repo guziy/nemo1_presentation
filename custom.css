@@ -1,0 +1,58 @@
+table.logo{
+   height: 100px;
+   border-collapse:collapse;
+   border-style: none;
+   border-width: 0;
+   float: left;
+   margin-left: 0;
+}
+
+.logo tr td{
+  vertical-align: bottom;
+  padding: 0;
+  border: none;
+}
+
+.logo tr{
+  border: none;
+  vertical-align: bottom;
+  padding: 0;
+}
+
+.logo img{
+    height: 60px;
+}
+
+.reveal{
+	font-size: 230%;
+}
+
+.input_area.box-flex1{
+	width: 130%;
+}
+
+.higlight{
+	width: 130%;
+}
+
+.input.hbox{
+	width: 130%;
+}
+
+div.text_cell_render.border-box-sizing.rendered_html span#authors{
+	color: gray;
+	font-size: 70%;
+}
+
+div.input_hidden {
+  display: none;
+//  margin-top: 5px;
+}
+
+div.prompt.inut_prompt{
+	display: none;
+}
+
+div.prompt.output_prompt{
+	display: none;
+}
