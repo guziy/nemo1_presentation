@@ -7,6 +7,15 @@ table.logo{
    margin-left: 0;
 }
 
+table.seasonal-table{
+   border-collapse:collapse;
+   border-style: none;
+   border-width: 0;
+   float: left;
+   margin-left: 0;
+}
+}
+
 .logo tr td{
   vertical-align: bottom;
   padding: 0;
@@ -56,3 +65,8 @@ div.prompt.inut_prompt{
 div.prompt.output_prompt{
 	display: none;
 }
+
+
+
+
+

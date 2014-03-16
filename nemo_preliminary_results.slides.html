@@ -1729,25 +1729,7 @@ text-align: inherit;
 </head>
 
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
-<style type="text/css">
-//div.output_wrapper {
-//  margin-top: 0px;
-//}
-.input_hidden {
-//  display: none;
-//  margin-top: 5px;
-}
-</style>
-
-<script>
-$(document).ready(function(){
-  $(".output_wrapper").click(function(){
-      $(this).prev('.input_hidden').slideToggle();
-  });
-})
-</script>
 <body>
 <div class="reveal">
 <div class="slides">
@@ -1762,11 +1744,11 @@ $(document).ready(function(){
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="outline">Outline</h1>
 <ul>
-<li><p>Driving data and model configuration</p></li>
+<li><p>Experimental setup and driving data</p></li>
 <li><p>Seasonal climatologies</p></li>
-<li><p>Vertical structure of lake temperature (which diffusion scheme and coefficients we have to use?)</p></li>
-<li><p>Validation with observations and analysis</p></li>
-<li><p>Water flow validation</p></li>
+<li><p>SST and SSH timeseries</p></li>
+<li><p>Validation with observations</p></li>
+<li><p>Vertical structure of lake temperature</p></li>
 <li><p>Ice and river questions</p></li>
 </ul>
 </div></section>
@@ -1777,77 +1759,135 @@ $(document).ready(function(){
 <ul>
 <li><p>Horizontal resolution: 0.1 degree, <span class="math">\(170\times90\)</span> gridpoints (Rotated lat/lon projection)</p></li>
 <li><p>35 vertical levels with partial steps at the bottom. Level thickness gradually increases from 25 cm at the surface to 30 m at the bottom</p></li>
-<li><p>Time step: 1 hour</p></li>
+<li><p>Time step: 1 hour (Scaled accordingly following Dupont et al 2012, who used 600 s at 2km horizontal resolution)</p></li>
+<li><p>Model version: 3.4</p></li>
 </ul>
 </div></section>
     </section><section>
     <section>
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="physical-parameterisationsoptions-that-work">Physical parameterisations/options that work</h1>
-<ul>
-<li>Surface pressure gradient term is treated by filtering EGWs. (Roullet and Madec 2000, preprocessor key: <code>key_dynspg_flt</code>)</li>
-</ul>
-</div>
-<div class="cell border-box-sizing code_cell vbox">
-<div class="input hbox">
-<div class="prompt input_prompt">
-In&nbsp;[2]:
-</div>
-<div class="input_area box-flex1">
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">ipy_table</span>
-</pre></div>
-
-</div>
+<div>
+<img src="images/test_fwb_my/bathy_meter.svg"/>
 </div>
 
-</div>
-<div class="cell border-box-sizing code_cell vbox">
-<div class="input hbox">
-<div class="prompt input_prompt">
-In&nbsp;[3]:
-</div>
-<div class="input_area box-flex1">
-<div class="highlight"><pre><span class="n">keys</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">key_trabbl key_lim2 key_ldfslp key_traldf_c2d  key_dynldf_c3d key_zdftke key_zdfddm  key_glk key_trddyn key_trdtra key_dynspg_flt key_mpp_mpi key_mpp_rep</span>
-<span class="s">&quot;&quot;&quot;</span>
-<span class="n">ipy_table</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">keys</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="mi">5</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-
-<div class="vbox output_wrapper">
-<div class="output vbox">
-
-
-<div class="hbox output_area"><div class="prompt output_prompt">
-    Out[3]:</div>
-<div class="box-flex1 output_subarea output_pyout">
-
-<div class="output_html rendered_html">
-<table border="1" cellpadding="3" cellspacing="0"  style="border:1px solid black;border-collapse:collapse;"><tr><td>key_trabbl</td><td>key_lim2</td><td>key_ldfslp</td><td>key_traldf_c2d</td><td>key_dynldf_c3d</td></tr><tr><td>key_zdftke</td><td>key_zdfddm</td><td>key_glk</td><td>key_trddyn</td><td>key_trdtra</td></tr><tr><td>key_dynspg_flt</td><td>key_mpp_mpi</td><td>key_mpp_rep</td><td></td><td></td></tr>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
+<h2 id="fig-simulation-domain-and-bathymetry">Fig: Simulation domain and Bathymetry</h2>
 </div></section>
     </section><section>
     <section>
-<div class="cell border-box-sizing code_cell vbox">
-<div class="input hbox">
-<div class="prompt input_prompt">
-In&nbsp;[]:
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="physical-parameterisationsoptions-that-work-for-us">Physical parameterisations/options that work for us</h1>
+<ul>
+<li><p>Surface pressure gradient term is treated by filtering EGWs.</p>
+<p>(<strong>Roullet and Madec 2000</strong>, preprocessor key: <code>key_dynspg_flt</code>)</p></li>
+<li><p>Fresh water fluxes are corrected in a way that mean annual fresh water flux is 0.</p>
+<p><span class="math">\[E-P-R = 0\]</span></p></li>
+<li>The list of keys used to compile the model.
+<table>
+<tr><td>
+key_trabbl
+</td> <td>
+<b> key_lim2 </b>
+</td> <td>
+key_ldfslp
+</td> </tr> 
+<tr><td>
+<i>key_dynldf_c3d</i>
+</td> <td>
+key_zdftke
+</td> <td>
+key_zdfddm
+</td> </tr>
+<tr>  <td> 
+<b> key_dynspg_flt</b>
+</td> <td>
+<i>key_traldf_c2d</i>
+</td> </tr> 
+</table>
+</li>
+</ul>
+</div></section>
+    </section><section>
+    <section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="relevant-namelist-parameters">Relevant namelist parameters</h1>
+<ul>
+<li><p>TVD scheme used for tracer advection</p></li>
+<li><p>lateral diffusion scheme for tracers</p>
+<ul>
+<li><p>laplacian operator</p></li>
+<li><p><strong>rn_aht_0 = 2.5</strong> ! horizontal eddy diffusivity for tracers <span class="math">\([{\rm m^2/s}]\)</span></p></li>
+</ul></li>
+<li><p>lateral diffusion on momentum</p>
+<ul>
+<li><p>laplacian operator</p></li>
+<li><p><strong>rn_ahm_0_lap = 50.0</strong> ! horizontal laplacian eddy viscosity <span class="math">\([{\rm m^2/s}]\)</span></p></li>
+</ul></li>
+</ul>
+</div></section>
+    </section><section>
+    <section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="driving-data">Driving data</h1>
+<ul>
+<li><p><a href="http://www.drakkar-ocean.eu/publications/reports/dfs5-1-report">DFS5.2</a> (Drakkar Forcing Set) available for 1958-2012</p></li>
+<li><p>Variables:</p>
+<ul>
+<li><p><strong>wind</strong> components at 10 m, 3-hourly</p></li>
+<li><p><strong>temperature and humidity</strong> of air at 2m, 3-hourly</p></li>
+<li><p><strong>Longwave and shortwave radiation</strong> fluxes, daily</p></li>
+<li><p><strong>Snowrate and precipitation</strong>, daily</p></li>
+</ul></li>
+</ul>
+</div></section>
+    </section><section>
+    <section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="simulated-seasonal-sst">Simulated seasonal SST</h1>
+<p><img src="images/test_fwb_my/sosstsst_djf-mam-jja-son.jpeg"></p>
+</div></section>
+    </section><section>
+    <section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="mixed-layer-depth">Mixed layer depth</h1>
+<p><img src="images/test_fwb_my/somxl010_djf-mam-jja-son.jpeg"/></p>
+</div></section>
+    </section><section>
+    <section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="simulated-annual-mean-surface-velocities">Simulated Annual mean surface velocities</h1>
+<p><img src="images/test_fwb_my/vozocrtx-vomecrty_annual.jpeg"/></p>
+</div></section><section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="simulated-seasonal-surface-velocities-djf">Simulated seasonal surface velocities (DJF)</h1>
+<p><img src="images/test_fwb_my/vozocrtx-vomecrty_djf.jpeg"/></p>
+</div></section><section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="simulated-seasonal-surface-velocities-mam">Simulated seasonal surface velocities (MAM)</h1>
+<p><img src="images/test_fwb_my/vozocrtx-vomecrty_mam.jpeg"/></p>
+</div></section><section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="simulated-seasonal-surface-velocities-jja">Simulated seasonal surface velocities (JJA)</h1>
+<p><img src="images/test_fwb_my/vozocrtx-vomecrty_jja.jpeg"/></p>
+</div></section><section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="simulated-seasonal-surface-velocities-son">Simulated seasonal surface velocities (SON)</h1>
+<p><img src="images/test_fwb_my/vozocrtx-vomecrty_son.jpeg"/></p>
+</div></section>
+    </section><section>
+    <section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="sea-surface-height-timeseries-spinup-using-climatological-forcing">Sea surface height (timeseries, spinup using climatological forcing)</h1>
+<p><img src="images/test_fwb_my/1d/ts_sossheig_50_65_10_10.jpeg" /></p>
+</div></section><section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="temperature-spinup">Temperature (spinup)</h1>
+<p><img src="images/test_fwb_my/1d/ts_sosstsst_50_65_10_10.jpeg" /></p>
+</div></section><section>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="ice-fraction">Ice fraction</h1>
+<p><img src="images/test_fwb_my/1d/ts_soicecov_50_65_10_10.jpeg" /></p>
 </div>
-<div class="input_area box-flex1">
-<div class="highlight"><pre>
-</pre></div>
-
-</div>
-</div>
+<div class="text_cell_render border-box-sizing rendered_html">
 
 </div></section>
     </section>
@@ -1933,7 +1973,6 @@ MathJax.Hub.Rerender(event.currentSlide);
 </body>
 
 
-
 <script>
 
 Reveal.initialize({
@@ -1988,4 +2027,6 @@ Reveal.initialize({
 });
 
 </script>
+
+
 </html>
